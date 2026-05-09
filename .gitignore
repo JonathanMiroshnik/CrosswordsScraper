@@ -1,3 +1,7 @@
+# Output directory (keep .gitkeep, ignore generated files)
+output/*
+!output/.gitkeep
+
 # Zip files
 *.zip
 

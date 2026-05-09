@@ -1,3 +1,5 @@
+#!/usr/bin/env python3
+
 import requests
 from bs4 import BeautifulSoup
 
@@ -214,18 +216,56 @@ def export_crossword(cid):
 
     final = build_html(cid, img, clues, answers)
     outname = f"crossword_{cid}.html"
+    outpath = f"output/{outname}"
 
-    with open(outname, "w", encoding="utf-8") as f:
+    with open(outpath, "w", encoding="utf-8") as f:
         f.write(final)
 
-    print("Saved:", outname)
+    print("Saved:", outpath)
 
 
 # --------------------------------
-# Test run
+# CLI entry point
 # --------------------------------
+def print_help():
+    print("absite_crossword_export.py — Export crosswords from absite.ru to print-ready HTML files")
+    print()
+    print("Usage:")
+    print("  ./absite_crossword_export.py <cid>                   Export a single crossword")
+    print("  ./absite_crossword_export.py <start> <end>           Export a range of crosswords")
+    print("  ./absite_crossword_export.py --help                  Show this help message")
+    print()
+    print("  Or with python3:")
+    print("  python3 absite_crossword_export.py <cid>")
+    print("  python3 absite_crossword_export.py <start> <end>")
+    print()
+    print("Arguments:")
+    print("  cid       Crossword ID (integer) — the number from the crossword URL on absite.ru")
+    print("  start     First crossword ID in the range (inclusive)")
+    print("  end       Last crossword ID in the range (inclusive)")
+    print()
+    print("Output:")
+    print("  HTML files are saved to the 'output/' directory as 'crossword_<cid>.html'")
+    print()
+    print("Examples:")
+    print("  ./absite_crossword_export.py 5000")
+    print("  ./absite_crossword_export.py 5000 5100")
+
+
 if __name__ == "__main__":
-    # HISTORY:
-    # 6400 to 6500
-    for cid in range(5000, 5100):
+    import sys
+
+    if len(sys.argv) < 2 or sys.argv[1] in ("--help", "-h"):
+        print_help()
+        sys.exit(1)
+
+    if len(sys.argv) == 2:
+        # Single crossword
+        cid = int(sys.argv[1])
         export_crossword(cid)
+    else:
+        # Range: start to end (inclusive)
+        start = int(sys.argv[1])
+        end = int(sys.argv[2])
+        for cid in range(start, end + 1):
+            export_crossword(cid)
